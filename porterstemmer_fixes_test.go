@@ -1,12 +1,8 @@
 package porterstemmer
 
-
-
 import (
 	"testing"
 )
-
-
 
 // Test for issue listed here:
 // https://github.com/reiver/go-porterstemmer/issues/1
