@@ -1,3 +1,7 @@
+# This fork...
+
+I'm maintaining this fork because the original author was not replying to issues or pull requests.  For now I plan on maintaining this fork as necessary.
+
 # Go Porter Stemmer
 
 A native Go clean room implementation of the Porter Stemming Algorithm.
