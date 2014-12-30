@@ -426,7 +426,7 @@ func TestHasSuffix(t *testing.T) {
 
 	for _, datum := range tests {
 		if actual := hasSuffix(datum.S, datum.Suffix); actual != datum.Expected {
-			t.Errorf("Did NOT get what was expected for calling hasSuffix() on [%s] with suffix [%s]. Expect [%d] but got [%d]", string(datum.S), string(datum.Suffix), datum.Expected, actual)
+			t.Errorf("Did NOT get what was expected for calling hasSuffix() on [%s] with suffix [%s]. Expect [%t] but got [%t]", string(datum.S), string(datum.Suffix), datum.Expected, actual)
 		}
 	}
 }
