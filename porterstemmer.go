@@ -1,102 +1,69 @@
 package porterstemmer
 
-import (
-	//	"log"
-	"unicode"
-)
+import "unicode"
 
+// isConsonant returns true if the rune represents a constanant.  Y is regarded
+// a constanant if it starts the word, or is followed by a vowel.
 func isConsonant(s []rune, i int) bool {
-
-	//DEBUG
-	//log.Printf("isConsonant: [%+v]", string(s[i]))
-
-	result := true
-
 	switch s[i] {
 	case 'a', 'e', 'i', 'o', 'u':
-		result = false
+		return false
 	case 'y':
-		if 0 == i {
-			result = true
+		if i == 0 {
+			return true
 		} else {
-			result = !isConsonant(s, i-1)
+			return !isConsonant(s, i-1)
 		}
 	default:
-		result = true
+		return true
 	}
-
-	return result
 }
 
 func measure(s []rune) uint {
-
-	// Initialize.
-	lenS := len(s)
-	result := uint(0)
-	i := 0
-
-	// Short Circuit.
-	if 0 == lenS {
-		/////////// RETURN
-		return result
+	if len(s) == 0 {
+		return 0
 	}
 
+	lenS := len(s)
+	m := uint(0)
+
 	// Ignore (potential) consonant sequence at the beginning of word.
-	for isConsonant(s, i) {
-
-		//DEBUG
-		//log.Printf("[measure([%s])] Eat Consonant [%d] -> [%s]", string(s), i, string(s[i]))
-
-		i++
-		if i >= lenS {
-			/////////////// RETURN
-			return result
-		}
+	i := 0
+	for i = 0; i < len(s) && isConsonant(s, i); i++ {
+	}
+	if i == len(s) {
+		return 0
 	}
 
 	// For each pair of a vowel sequence followed by a consonant sequence, increment result.
 Outer:
-	for i < lenS {
-
+	for i < len(s) {
 		for !isConsonant(s, i) {
-
-			//DEBUG
-			//log.Printf("[measure([%s])] VOWEL [%d] -> [%s]", string(s), i, string(s[i]))
-
 			i++
 			if i >= lenS {
-				/////////// BREAK
 				break Outer
 			}
 		}
 		for isConsonant(s, i) {
-
-			//DEBUG
-			//log.Printf("[measure([%s])] CONSONANT [%d] -> [%s]", string(s), i, string(s[i]))
-
 			i++
 			if i >= lenS {
-				result++
-				/////////// BREAK
+				m++
 				break Outer
 			}
 		}
-		result++
+		m++
 	}
-
-	// Return
-	return result
+	return m
 }
 
+// hasSuffix checks if a word has a specific suffix
 func hasSuffix(s, suffix []rune) bool {
-
 	lenSMinusOne := len(s) - 1
 	lenSuffixMinusOne := len(suffix) - 1
 
 	if lenSMinusOne <= lenSuffixMinusOne {
 		return false
 	} else if s[lenSMinusOne] != suffix[lenSuffixMinusOne] { // I suspect checking this first should speed this function up in practice.
-		/////// RETURN
 		return false
 	} else {
 
@@ -114,19 +81,13 @@ func hasSuffix(s, suffix []rune) bool {
 	return true
 }
 
+// containsVowel returns true if the string has a vowel
 func containsVowel(s []rune) bool {
-
-	lenS := len(s)
-
-	for i := 0; i < lenS; i++ {
-
+	for i := 0; i < len(s); i++ {
 		if !isConsonant(s, i) {
-			/////////// RETURN
 			return true
 		}
-
 	}
-
 	return false
 }
 
@@ -752,7 +713,6 @@ func step5a(s []rune) []rune {
 
 func step5b(s []rune) []rune {
 
-	// Initialize.
 	lenS := len(s)
 	result := s
 
@@ -774,57 +734,31 @@ func step5b(s []rune) []rune {
 	return result
 }
 
+// StemString converts a string to a rune array, then stems the result.
 func StemString(s string) string {
-
-	// Convert string to []rune
-	runeArr := []rune(s)
-
-	// Stem.
-	runeArr = Stem(runeArr)
-
-	// Convert []rune to string
-	str := string(runeArr)
-
-	// Return.
-	return str
+	ra := []rune(s)
+	ra = Stem(ra)
+	return string(ra)
 }
 
+// Stem converts the runes to lower case, then stems the lowercase runes
 func Stem(s []rune) []rune {
-
-	// Initialize.
-	lenS := len(s)
-
-	// Short circuit.
-	if 0 == lenS {
-		/////////// RETURN
+	if len(s) == 0 {
 		return s
 	}
-
-	// Make all runes lowercase.
-	for i := 0; i < lenS; i++ {
+	for i := 0; i < len(s); i++ {
 		s[i] = unicode.ToLower(s[i])
 	}
-
-	// Stem
 	result := StemWithoutLowerCasing(s)
-
-	// Return.
 	return result
 }
 
+// StemWithoutLowerCasing applies the stemming assuming that the runes are
+// lowercase.
 func StemWithoutLowerCasing(s []rune) []rune {
-
-	// Initialize.
-	lenS := len(s)
-
-	// Words that are of length 2 or less is already stemmed.
-	// Don't do anything.
-	if 2 >= lenS {
-		/////////// RETURN
+	if len(s) <= 2 {
 		return s
 	}
-
-	// Stem
 	s = step1a(s)
 	s = step1b(s)
 	s = step1c(s)
@@ -833,7 +767,5 @@ func StemWithoutLowerCasing(s []rune) []rune {
 	s = step4(s)
 	s = step5a(s)
 	s = step5b(s)
-
-	// Return.
 	return s
 }
