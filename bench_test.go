@@ -12,7 +12,7 @@ import (
 )
 
 func getVoc() []string {
-	f, err := os.Open("testdata/voc.txt")
+	f, err := os.Open("test/voc.txt")
 	if err != nil {
 		panic(err)
 	}

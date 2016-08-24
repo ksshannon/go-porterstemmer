@@ -58,6 +58,9 @@ Outer:
 
 // hasSuffix checks if a word has a specific suffix
 func hasSuffix(s, suffix []rune) bool {
+	if len(suffix) > len(s) {
+		return false
+	}
 	lenSMinusOne := len(s) - 1
 	lenSuffixMinusOne := len(suffix) - 1
 
@@ -92,43 +95,23 @@ func containsVowel(s []rune) bool {
 }
 
 func hasRepeatDoubleConsonantSuffix(s []rune) bool {
-
-	// Initialize.
-	lenS := len(s)
-
-	result := false
-
-	// Do it!
-	if 2 > lenS {
-		result = false
-	} else if s[lenS-1] == s[lenS-2] && isConsonant(s, lenS-1) { // Will using isConsonant() cause a problem with "YY"?
-		result = true
-	} else {
-		result = false
+	if len(s) < 2 {
+		return false
 	}
-
-	// Return,
-	return result
+	if s[len(s)-1] == s[len(s)-2] && isConsonant(s, len(s)-1) {
+		return true
+	}
+	return false
 }
 
-func hasConsonantVowelConsonantSuffix(s []rune) bool {
-
-	// Initialize.
-	lenS := len(s)
-
-	result := false
-
-	// Do it!
-	if 3 > lenS {
-		result = false
-	} else if isConsonant(s, lenS-3) && !isConsonant(s, lenS-2) && isConsonant(s, lenS-1) {
-		result = true
-	} else {
-		result = false
+func hasCVCSuffix(s []rune) bool {
+	if len(s) < 3 {
+		return false
 	}
-
-	// Return
-	return result
+	if isConsonant(s, len(s)-3) && !isConsonant(s, len(s)-2) && isConsonant(s, len(s)-1) {
+		return true
+	}
+	return false
 }
 
 func step1a(s []rune) []rune {
@@ -213,7 +196,7 @@ func step1b(s []rune) []rune {
 				lenSubSlice := len(subSlice)
 
 				result = subSlice[:lenSubSlice-lenTrim]
-			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasConsonantVowelConsonantSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
+			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
 				lenTrim := -1
 
 				result = s[:lenS-lenSuffix-lenTrim]
@@ -255,7 +238,7 @@ func step1b(s []rune) []rune {
 				lenSubSlice := len(subSlice)
 
 				result = subSlice[:lenSubSlice-lenTrim]
-			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasConsonantVowelConsonantSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
+			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
 				lenTrim := -1
 
 				result = s[:lenS-lenSuffix-lenTrim]
@@ -273,30 +256,16 @@ func step1b(s []rune) []rune {
 }
 
 func step1c(s []rune) []rune {
-
-	// Initialize.
-	lenS := len(s)
-
-	result := s
-
-	// Do it!
-	if 2 > lenS {
-		/////////// RETURN
-		return result
+	if len(s) < 2 {
+		return s
 	}
-
-	if 'y' == s[lenS-1] && containsVowel(s[:lenS-1]) {
-
-		result[lenS-1] = 'i'
-
-	} else if 'Y' == s[lenS-1] && containsVowel(s[:lenS-1]) {
-
-		result[lenS-1] = 'I'
-
+	stem := s
+	if hasSuffix(s, []rune("y")) && containsVowel(s[:len(s)-1]) {
+		stem[len(s)-1] = 'i'
+	} else if hasSuffix(s, []rune("Y")) && containsVowel(s[:len(s)-1]) {
+		stem[len(s)-1] = 'I'
 	}
-
-	// Return.
-	return result
+	return stem
 }
 
 func step2(s []rune) []rune {
@@ -701,7 +670,7 @@ func step5a(s []rune) []rune {
 		if 1 < m {
 			result = subSlice
 		} else if 1 == m {
-			if c := subSlice[len(subSlice)-1]; !(hasConsonantVowelConsonantSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c) {
+			if c := subSlice[len(subSlice)-1]; !(hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c) {
 				result = subSlice
 			}
 		}
