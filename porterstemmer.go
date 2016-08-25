@@ -110,7 +110,7 @@ func step1a(s []rune) []rune {
 		return s[:len(s)-2]
 	} else if hasSuffix(s, []rune("ss")) {
 		return s
-	} else if hasSuffix(s, []rune("s")) {
+	} else if s[len(s)-1] == 's' {
 		return s[:len(s)-1]
 	}
 	return s
@@ -225,9 +225,9 @@ func step1c(s []rune) []rune {
 		return s
 	}
 	stem := s
-	if hasSuffix(s, []rune("y")) && containsVowel(s[:len(s)-1]) {
+	if s[len(s)-1] == 'y' && containsVowel(s[:len(s)-1]) {
 		stem[len(s)-1] = 'i'
-	} else if hasSuffix(s, []rune("Y")) && containsVowel(s[:len(s)-1]) {
+	} else if s[len(s)-1] == 'Y' && containsVowel(s[:len(s)-1]) {
 		stem[len(s)-1] = 'I'
 	}
 	return stem
@@ -634,7 +634,7 @@ func step5a(s []rune) []rune {
 }
 
 func step5b(s []rune) []rune {
-	if len(s) > 2 && hasSuffix(s, []rune("ll")) && measure(s[:len(s)-1]) > 1 {
+	if len(s) > 2 && s[len(s)-1] == 'l' && s[len(s)-2] == 'l' && measure(s[:len(s)-1]) > 1 {
 		return s[:len(s)-1]
 	}
 	return s
