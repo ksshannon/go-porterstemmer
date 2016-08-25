@@ -619,7 +619,10 @@ func step4(s []rune) []rune {
 }
 
 func step5a(s []rune) []rune {
-	if hasSuffix(s, []rune("e")) {
+	if len(s) < 1 {
+		return s
+	}
+	if s[len(s)-1] == 'e' {
 		subSlice := s[:len(s)-1]
 		m := measure(subSlice)
 		if 1 < m {
