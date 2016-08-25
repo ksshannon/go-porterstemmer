@@ -63,8 +63,6 @@ func hasSuffix(s, suffix []rune) bool {
 		// suffix
 		return false
 	}
-	// Original author checked the last rune first, not sure if that is a correct
-	// optimization
 	for i := 0; i < len(suffix); i++ {
 		if suffix[i] != s[(len(s)-1)-(len(suffix)-1)+i] {
 			return false
@@ -117,106 +115,62 @@ func step1a(s []rune) []rune {
 }
 
 func step1b(s []rune) []rune {
-
-	// Initialize.
 	var result []rune = s
 
 	lenS := len(s)
 
 	// Do it!
 	if suffix := []rune("eed"); hasSuffix(s, suffix) {
-		lenSuffix := len(suffix)
-
-		subSlice := s[:lenS-lenSuffix]
-
-		m := measure(subSlice)
-
-		if 0 < m {
-			lenTrim := 1
-
-			result = s[:lenS-lenTrim]
+		subSlice := s[:len(s)-len(suffix)]
+		if measure(subSlice) > 0 {
+			return s[:len(s)-1]
 		}
 	} else if suffix := []rune("ed"); hasSuffix(s, suffix) {
-		lenSuffix := len(suffix)
-
-		subSlice := s[:lenS-lenSuffix]
-
+		subSlice := s[:len(s)-len(suffix)]
 		if containsVowel(subSlice) {
-
 			if suffix2 := []rune("at"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
+				return s[:len(s)-len(suffix) - -1]
 			} else if suffix2 := []rune("bl"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
+				return s[:lenS-len(suffix) - -1]
 			} else if suffix2 := []rune("iz"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
+				return s[:lenS-len(suffix) - -1]
 			} else if c := subSlice[len(subSlice)-1]; 'l' != c && 's' != c && 'z' != c && hasRepeatDoubleConsonantSuffix(subSlice) {
-				lenTrim := 1
-
-				lenSubSlice := len(subSlice)
-
-				result = subSlice[:lenSubSlice-lenTrim]
+				return subSlice[:len(subSlice)-1]
 			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
-
+				result = s[:len(s)-len(suffix) - -1]
 				result[len(result)-1] = 'e'
+				return result
 			} else {
-				result = subSlice
+				return subSlice
 			}
-
 		}
 	} else if suffix := []rune("ing"); hasSuffix(s, suffix) {
-		lenSuffix := len(suffix)
-
-		subSlice := s[:lenS-lenSuffix]
+		subSlice := s[:len(s)-len(suffix)]
 
 		if containsVowel(subSlice) {
-
 			if suffix2 := []rune("at"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
-
+				result = s[:len(s)-len(suffix) - -1]
 				result[len(result)-1] = 'e'
+				return result
 			} else if suffix2 := []rune("bl"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
-
+				result = s[:len(s)-len(suffix) - -1]
 				result[len(result)-1] = 'e'
+				return result
 			} else if suffix2 := []rune("iz"); hasSuffix(subSlice, suffix2) {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
-
+				result = s[:len(s)-len(suffix) - -1]
 				result[len(result)-1] = 'e'
+				return result
 			} else if c := subSlice[len(subSlice)-1]; 'l' != c && 's' != c && 'z' != c && hasRepeatDoubleConsonantSuffix(subSlice) {
-				lenTrim := 1
-
-				lenSubSlice := len(subSlice)
-
-				result = subSlice[:lenSubSlice-lenTrim]
+				return subSlice[:len(subSlice)-1]
 			} else if c := subSlice[len(subSlice)-1]; 1 == measure(subSlice) && hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c {
-				lenTrim := -1
-
-				result = s[:lenS-lenSuffix-lenTrim]
-
+				result = s[:len(s)-len(suffix) - -1]
 				result[len(result)-1] = 'e'
+				return result
 			} else {
-				result = subSlice
+				return subSlice
 			}
-
 		}
 	}
-
-	// Return.
 	return result
 }
 
