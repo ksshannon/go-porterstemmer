@@ -58,29 +58,18 @@ Outer:
 
 // hasSuffix checks if a word has a specific suffix
 func hasSuffix(s, suffix []rune) bool {
-	if len(suffix) > len(s) {
+	if len(s) <= len(suffix) {
+		// if the suffix is as long or longer than the string, then it can't be a
+		// suffix
 		return false
 	}
-	lenSMinusOne := len(s) - 1
-	lenSuffixMinusOne := len(suffix) - 1
-
-	if lenSMinusOne <= lenSuffixMinusOne {
-		return false
-	} else if s[lenSMinusOne] != suffix[lenSuffixMinusOne] { // I suspect checking this first should speed this function up in practice.
-		return false
-	} else {
-
-		for i := 0; i < lenSuffixMinusOne; i++ {
-
-			if suffix[i] != s[lenSMinusOne-lenSuffixMinusOne+i] {
-				/////////////// RETURN
-				return false
-			}
-
+	// Original author checked the last rune first, not sure if that is a correct
+	// optimization
+	for i := 0; i < len(suffix); i++ {
+		if suffix[i] != s[(len(s)-1)-(len(suffix)-1)+i] {
+			return false
 		}
-
 	}
-
 	return true
 }
 
@@ -115,40 +104,16 @@ func hasCVCSuffix(s []rune) bool {
 }
 
 func step1a(s []rune) []rune {
-
-	// Initialize.
-	var result []rune = s
-
-	lenS := len(s)
-
-	// Do it!
-	if suffix := []rune("sses"); hasSuffix(s, suffix) {
-
-		lenTrim := 2
-
-		subSlice := s[:lenS-lenTrim]
-
-		result = subSlice
-	} else if suffix := []rune("ies"); hasSuffix(s, suffix) {
-		lenTrim := 2
-
-		subSlice := s[:lenS-lenTrim]
-
-		result = subSlice
-	} else if suffix := []rune("ss"); hasSuffix(s, suffix) {
-
-		result = s
-	} else if suffix := []rune("s"); hasSuffix(s, suffix) {
-
-		lenSuffix := 1
-
-		subSlice := s[:lenS-lenSuffix]
-
-		result = subSlice
+	if hasSuffix(s, []rune("sses")) {
+		return s[:len(s)-2]
+	} else if hasSuffix(s, []rune("ies")) {
+		return s[:len(s)-2]
+	} else if hasSuffix(s, []rune("ss")) {
+		return s
+	} else if hasSuffix(s, []rune("s")) {
+		return s[:len(s)-1]
 	}
-
-	// Return.
-	return result
+	return s
 }
 
 func step1b(s []rune) []rune {
@@ -654,53 +619,25 @@ func step4(s []rune) []rune {
 }
 
 func step5a(s []rune) []rune {
-
-	// Initialize.
-	lenS := len(s)
-	result := s
-
-	// Do it!
-	if 'e' == s[lenS-1] {
-		lenSuffix := 1
-
-		subSlice := s[:lenS-lenSuffix]
-
+	if hasSuffix(s, []rune("e")) {
+		subSlice := s[:len(s)-1]
 		m := measure(subSlice)
-
 		if 1 < m {
-			result = subSlice
+			return subSlice
 		} else if 1 == m {
 			if c := subSlice[len(subSlice)-1]; !(hasCVCSuffix(subSlice) && 'w' != c && 'x' != c && 'y' != c) {
-				result = subSlice
+				return subSlice
 			}
 		}
 	}
-
-	// Return.
-	return result
+	return s
 }
 
 func step5b(s []rune) []rune {
-
-	lenS := len(s)
-	result := s
-
-	// Do it!
-	if 2 < lenS && 'l' == s[lenS-2] && 'l' == s[lenS-1] {
-
-		lenSuffix := 1
-
-		subSlice := s[:lenS-lenSuffix]
-
-		m := measure(subSlice)
-
-		if 1 < m {
-			result = subSlice
-		}
+	if len(s) > 2 && hasSuffix(s, []rune("ll")) && measure(s[:len(s)-1]) > 1 {
+		return s[:len(s)-1]
 	}
-
-	// Return.
-	return result
+	return s
 }
 
 // StemString converts a string to a rune array, then stems the result.

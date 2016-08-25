@@ -1,118 +1,86 @@
 package porterstemmer
 
 import (
-	"bufio"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
+const testDir = "testdata"
+
+const (
+	vocURL    = "http://tartarus.org/martin/PorterStemmer/voc.txt"
+	outputURL = "http://tartarus.org/martin/PorterStemmer/output.txt"
+)
+
+// init downloads the appropriate files, if necessary.
+func init() {
+	_, err := os.Stat(testDir)
+	if nil != err {
+		_ = os.Mkdir(testDir, 0755)
+	}
+	_, err = os.Stat(testDir)
+	if nil != err {
+		panic(fmt.Sprintf("The test data folder ([%s]) does not exists (and could not create it).", testDir))
+	}
+	for _, u := range []string{vocURL, outputURL} {
+		fname := filepath.Join(testDir, path.Base(u))
+		_, err = os.Stat(fname)
+		if err == nil {
+			continue
+		}
+		resp, err := http.Get(u)
+		if err != nil {
+			panic(fmt.Sprintf("could not download %s", u))
+		}
+		defer resp.Body.Close()
+		fout, err := os.Create(fname)
+		if err != nil {
+			panic(fmt.Sprintf("could not download %s", u))
+		}
+		defer fout.Close()
+		_, err = io.Copy(fout, resp.Body)
+		if err != nil {
+			panic(fmt.Sprintf("could not download %s", u))
+		}
+	}
+}
+
 func TestStemString(t *testing.T) {
 
-	testDataDirName := "testdata"
-
-	_, err := os.Stat(testDataDirName)
-	if nil != err {
-		_ = os.Mkdir(testDataDirName, 0755)
+	v, err := os.Open(filepath.Join(testDir, path.Base(vocURL)))
+	if err != nil {
+		t.Fatalf("%s", err)
 	}
-	_, err = os.Stat(testDataDirName)
-	if nil != err {
-		t.Errorf("The test data folder ([%s]) does not exists (and could not create it). Received error: [%v]", testDataDirName, err)
-		/////// RETURN
-		return
+	defer v.Close()
+	o, err := os.Open(filepath.Join(testDir, path.Base(outputURL)))
+	if err != nil {
+		t.Fatalf("%s", err)
 	}
+	defer o.Close()
 
-	vocFileName := testDataDirName + "/voc.txt"
-	_, err = os.Stat(vocFileName)
-	if nil != err {
-
-		vocHref := "http://tartarus.org/martin/PorterStemmer/voc.txt"
-
-		resp, err := http.Get(vocHref)
-		if nil != err {
-			t.Errorf("Could not download test file (from web) from URL: [%s]. Received error: [%v]", vocHref, err)
-			/////////// RETURN
-			return
-		}
-
-		respBody, err := ioutil.ReadAll(resp.Body)
-		if nil != err {
-			t.Errorf("Error loading the contents of from URL: [%s]. Received error: [%v].", vocHref, err)
-			/////////// RETURN
-			return
-		}
-
-		_ = ioutil.WriteFile(vocFileName, respBody, 0644)
-
+	data, err := ioutil.ReadAll(v)
+	if err != nil {
+		t.Fatalf("%s", err)
 	}
-	vocFd, err := os.Open(vocFileName)
-	if nil != err {
-		t.Errorf("Could NOT open testdata file: [%s]. Received error: [%v]", vocFileName, err)
-		/////// RETURN
-		return
+	vs := strings.Fields(string(data))
+
+	data, err = ioutil.ReadAll(o)
+	if err != nil {
+		t.Fatalf("%s", err)
 	}
-	defer vocFd.Close()
+	os := strings.Fields(string(data))
 
-	voc := bufio.NewReaderSize(vocFd, 1024)
-
-	outFileName := testDataDirName + "/output.txt"
-	_, err = os.Stat(outFileName)
-	if nil != err {
-
-		outHref := "http://tartarus.org/martin/PorterStemmer/output.txt"
-
-		resp, err := http.Get(outHref)
-		if nil != err {
-			t.Errorf("Could not download test file (from web) from URL: [%s]. Received error: [%v]", outHref, err)
-			/////////// RETURN
-			return
-		}
-
-		respBody, err := ioutil.ReadAll(resp.Body)
-		if nil != err {
-			t.Errorf("Error loading the contents of from URL: [%s]. Received error: [%v].", outHref, err)
-			/////////// RETURN
-			return
-		}
-
-		_ = ioutil.WriteFile(outFileName, respBody, 0644)
-
-	}
-	outFd, err := os.Open(outFileName)
-	if nil != err {
-		t.Errorf("Could NOT open testdata file: [%s]. Received error: [%v]", outFileName, err)
-		/////// RETURN
-		return
-	}
-	defer outFd.Close()
-
-	out := bufio.NewReaderSize(outFd, 1024)
-
-	for {
-
-		vocS, err := voc.ReadString('\n')
-		if nil != err {
-			/////// BREAK
-			break
-		}
-
-		vocS = strings.Trim(vocS, "\n\r\t ")
-
-		expected, err := out.ReadString('\n')
-		if nil != err {
-			t.Errorf("Received unexpected error when trying to read a line from [%s]. Received error: [%v]", outFileName, err)
-			/////// BREAK
-			break
-
-		}
-
-		expected = strings.Trim(expected, "\n\r\t ")
-
-		actual := StemString(vocS)
-		if expected != actual {
-			t.Errorf("Input: [%s] -> Actual: [%s]. Expected: [%s]", vocS, actual, expected)
+	for i, word := range vs {
+		stem := StemString(word)
+		if stem != os[i] {
+			t.Errorf("Input: [%s] -> Actual: [%s]. Expected: [%s]", word, stem, os[i])
 		}
 	}
 }
