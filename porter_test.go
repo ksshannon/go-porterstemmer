@@ -392,6 +392,26 @@ func TestStemWithoutLowerCasing(t *testing.T) {
 	}
 }
 
+// Test whether or not a stem is properly defined based on an expected value
+func stemEqual(stem, exp []rune) bool {
+	if 0 == len(stem) && 0 == len(exp) {
+		return true
+	} else if len(stem) != len(exp) {
+		return false
+	} else if stem[0] != exp[0] {
+		return false
+	} else if stem[len(stem)-1] != exp[len(exp)-1] {
+		return false
+	} else {
+		for j := 0; j < len(stem); j++ {
+			if stem[j] != exp[j] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func TestStep1a(t *testing.T) {
 	tests := []struct {
 		s   []rune
@@ -408,23 +428,7 @@ func TestStep1a(t *testing.T) {
 			stem := make([]rune, len(test.s))
 			copy(stem, test.s)
 			stem = step1a(stem)
-			equal := true
-			if 0 == len(stem) && 0 == len(test.exp) {
-				equal = true
-			} else if len(stem) != len(test.exp) {
-				equal = false
-			} else if stem[0] != test.exp[0] {
-				equal = false
-			} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-				equal = false
-			} else {
-				for j := 0; j < len(stem); j++ {
-					if stem[j] != test.exp[j] {
-						equal = false
-					}
-				}
-			}
-			if !equal {
+			if !stemEqual(stem, test.exp) {
 				t.Errorf("Did NOT get what was expected for calling step1a() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 			}
 		}
@@ -458,23 +462,7 @@ func TestStep1b(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step1b(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step1b() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -493,23 +481,7 @@ func TestStep1c(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step1c(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step1c() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -546,23 +518,7 @@ func TestStep2(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step2(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step2() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -585,23 +541,7 @@ func TestStep3(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step3(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step3() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -636,23 +576,7 @@ func TestStep4(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step4(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step4() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -671,23 +595,7 @@ func TestStep5a(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step5a(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step5a() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
@@ -705,23 +613,7 @@ func TestStep5b(t *testing.T) {
 		stem := make([]rune, len(test.s))
 		copy(stem, test.s)
 		stem = step5b(stem)
-		equal := true
-		if 0 == len(stem) && 0 == len(test.exp) {
-			equal = true
-		} else if len(stem) != len(test.exp) {
-			equal = false
-		} else if stem[0] != test.exp[0] {
-			equal = false
-		} else if stem[len(stem)-1] != test.exp[len(test.exp)-1] {
-			equal = false
-		} else {
-			for j := 0; j < len(stem); j++ {
-				if stem[j] != test.exp[j] {
-					equal = false
-				}
-			}
-		}
-		if !equal {
+		if !stemEqual(stem, test.exp) {
 			t.Errorf("Did NOT get what was expected for calling step5b() on [%s]. Expect [%s] but got [%s]", string(test.s), string(test.exp), string(stem))
 		}
 	}
