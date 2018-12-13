@@ -1,4 +1,4 @@
-package porterstemmer
+package porter
 
 import (
 	"io/ioutil"

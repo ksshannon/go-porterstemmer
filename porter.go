@@ -1,4 +1,4 @@
-package porterstemmer
+package porter
 
 import "unicode"
 
@@ -118,8 +118,6 @@ func step1b(s []rune) []rune {
 	var result []rune = s
 
 	lenS := len(s)
-
-	// Do it!
 	if suffix := []rune("eed"); hasSuffix(s, suffix) {
 		subSlice := s[:len(s)-len(suffix)]
 		if measure(subSlice) > 0 {
@@ -189,12 +187,10 @@ func step1c(s []rune) []rune {
 
 func step2(s []rune) []rune {
 
-	// Initialize.
 	lenS := len(s)
 
 	result := s
 
-	// Do it!
 	if suffix := []rune("ational"); hasSuffix(s, suffix) {
 		if 0 < measure(s[:lenS-len(suffix)]) {
 			result[lenS-5] = 'e'
@@ -296,17 +292,14 @@ func step2(s []rune) []rune {
 		}
 	}
 
-	// Return.
 	return result
 }
 
 func step3(s []rune) []rune {
 
-	// Initialize.
 	lenS := len(s)
 	result := s
 
-	// Do it!
 	if suffix := []rune("icate"); hasSuffix(s, suffix) {
 		lenSuffix := len(suffix)
 
@@ -369,11 +362,9 @@ func step3(s []rune) []rune {
 
 func step4(s []rune) []rune {
 
-	// Initialize.
 	lenS := len(s)
 	result := s
 
-	// Do it!
 	if suffix := []rune("al"); hasSuffix(s, suffix) {
 		lenSuffix := len(suffix)
 
