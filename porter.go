@@ -356,7 +356,6 @@ func step3(s []rune) []rune {
 		}
 	}
 
-	// Return.
 	return result
 }
 
@@ -559,7 +558,6 @@ func step4(s []rune) []rune {
 		}
 	}
 
-	// Return.
 	return result
 }
 
@@ -620,6 +618,5 @@ func StemWithoutLowerCasing(s []rune) []rune {
 	s = step3(s)
 	s = step4(s)
 	s = step5a(s)
-	s = step5b(s)
-	return s
+	return step5b(s)
 }
