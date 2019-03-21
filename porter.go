@@ -1,6 +1,8 @@
 package porter
 
-import "unicode"
+import (
+	"unicode"
+)
 
 // isConsonant returns true if the rune represents a constanant.  Y is regarded
 // a constanant if it starts the word, or is followed by a vowel.
@@ -59,8 +61,6 @@ Outer:
 // hasSuffix checks if a word has a specific suffix
 func hasSuffix(s, suffix []rune) bool {
 	if len(s) <= len(suffix) {
-		// if the suffix is as long or longer than the string, then it can't be a
-		// suffix
 		return false
 	}
 	for i := 0; i < len(suffix); i++ {
